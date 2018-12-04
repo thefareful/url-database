@@ -1,0 +1,18 @@
+<table class="table">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Used on</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let url of urls">
+      <th scope="row">1</th>
+      <td class="url-name">{{url?.name}}</td>
+      <td>{{url?.dateUsed | date:'medium'}}</td>
+      <td><button>Visit</button> <button>Remove</button></td>
+    </tr>
+  </tbody>
+</table>

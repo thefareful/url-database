@@ -1,0 +1,10 @@
+.form-container{
+    width: 80%;
+    margin: auto;   
+}
+
+input, textarea{
+    display: block;
+    margin-bottom: 1rem;
+    width: 25rem;
+}
