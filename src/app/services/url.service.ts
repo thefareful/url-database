@@ -9,7 +9,8 @@ import { Router } from "@angular/router";
 })
 export class UrlService {
   private urlList: Array<UrlData> = new Array();
-  private urlsUpdated = new Subject<Array<UrlData>>();
+  private urlsUpdated = new Subject<{data: Array<UrlData>, urlUpdated: number}>();
+  private urlsTested = new Subject<boolean>();
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -27,22 +28,24 @@ export class UrlService {
       description: descriprion
     };
     this.urlList.push(url);
-    this.urlsUpdated.next(this.urlList);
-    this.sortByDate();
+    this.urlsUpdated.next({data: this.urlList, urlUpdated: this.urlList.length});
+    this.saveData(this.urlList);
     this.router.navigate(["/"]);
   }
 
-  sortByDate() {
-    this.urlList.sort((a, b) => b.dateUsed - a.dateUsed);
-    this.saveData();
+  sortByDate(array: Array<any>) {
+    array.sort((a, b) => b.dateUsed - a.dateUsed);
+    return array;
   }
 
-  sortByName(){
-    this.urlList.sort((a, b) => a.name.localeCompare(b.name));
+  sortByName(array: Array<any>) {
+    array.sort((a, b) => a.name.localeCompare(b.name));
+    return array;
   }
 
-  saveData() {
-    localStorage.setItem("urlList", JSON.stringify(this.urlList));
+  saveData(data: Array<UrlData>) {
+    data = this.sortByDate(data);
+    localStorage.setItem("urlList", JSON.stringify(data));
   }
 
   getData() {
@@ -59,17 +62,47 @@ export class UrlService {
     return this.urlsUpdated.asObservable();
   }
 
-  updateDateVisited(id: number, date: number) {
-    this.urlList.find(url => url.id == id).dateUsed = date;
-    this.saveData();
-    this.urlsUpdated.next(this.urlList);
+  getUrlTestListener() {
+    return this.urlsTested.asObservable();
   }
 
-  removeUrl(id: number){
-    const url = this.urlList.find(url => url.id == id)
+  updateDateVisited(id: number, date: number) {
+    this.urlList.find(url => url.id == id).dateUsed = date;
+    this.urlsUpdated.next({data: this.urlList, urlUpdated: -1}); //-1 is sent here to indicate that url updated wasn't removed
+    this.saveData(this.urlList);
+  }
+
+  removeUrl(id: number) {
+    const url = this.urlList.find(url => url.id == id);
     let index = this.urlList.indexOf(url);
     this.urlList.splice(index, 1);
-    this.sortByDate();
-    this.urlsUpdated.next(this.urlList);
+    this.urlsUpdated.next({data: this.urlList, urlUpdated: id});
+    this.saveData(this.urlList);
+  }
+
+  testUrls() {
+    let brokenUrls: Array<UrlData> = new Array;
+    let testCount = 0;
+
+    this.urlList.forEach(url => {
+      setTimeout(() => {
+        this.http
+          .get<{result: boolean, code: number}>("https://helloacm.com/api/can-visit/?url=" + url.link)
+          .subscribe(status => {
+            if(status.code != 200){
+              url.isBroken = true;
+              brokenUrls.push(url);
+            }
+
+            testCount++;
+
+            if(testCount == this.urlList.length){
+              this.urlsTested.next(true);
+            }
+          });
+      }, 1001);
+    });
+
+    return this.sortByDate(brokenUrls);
   }
 }

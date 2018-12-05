@@ -15,14 +15,13 @@ export class HomeComponent implements OnInit {
   constructor(private urlService: UrlService) {}
 
   ngOnInit() {
-    this.urlService.getStoredData();
 
     this.urls = this.urlService.getData();
     
      this.urlService
       .getUrlUpdateListener()
-      .subscribe(data => {
-        this.urls = data
+      .subscribe(update => {
+        this.urls = update.data
       });
   }
 }

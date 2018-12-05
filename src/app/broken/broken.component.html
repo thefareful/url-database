@@ -1,3 +1,6 @@
 <div class="broken-container">
-  <button type="button" class="btn btn-outline-success {{buttonMode}}" (click)="onTest()">Test</button>
+  <h2>Broken URLs</h2>
+  <button type="button" class="btn btn-outline-success {{buttonMode}} test-button" (click)="onTest()">Test</button>
+
+  <app-item-list [urls]="brokenUrls"></app-item-list>
 </div>

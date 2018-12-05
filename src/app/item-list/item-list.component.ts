@@ -14,7 +14,6 @@ export class ItemListComponent implements OnInit {
   constructor(private urlService: UrlService) { }
 
   ngOnInit() {
-    
   }
 
   onVisit(id: number){
@@ -26,11 +25,11 @@ export class ItemListComponent implements OnInit {
   }
 
   sortByName(){
-    this.urlService.sortByName();
+    this.urls = this.urlService.sortByName(this.urls);
   }
 
   sortByDate(){
-    this.urlService.sortByDate();
+    this.urls = this.urlService.sortByDate(this.urls);
   }
 
 }

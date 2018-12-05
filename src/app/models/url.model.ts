@@ -4,4 +4,5 @@ export interface UrlData {
     name: string;
     dateUsed: number;
     description?: string;
+    isBroken?: boolean;
 }
