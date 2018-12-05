@@ -20,15 +20,8 @@ export class AddUrlComponent implements OnInit {
       console.log(form)
       return;
     }
-    
-    const newUrl: UrlData = {
-      name: form.value.name,
-      url: form.value.url,
-      dateUsed: Date.now()
-    }
 
-    
-    this.urlService.addUrl(newUrl);
+    this.urlService.addUrl(form.value.url, form.value.name, Date.now(), form.value.description);
     
   }
 

@@ -1,6 +1,7 @@
 export interface UrlData {
-    url: string;
+    id: number;
+    link: string;
     name: string;
-    description?: string;
     dateUsed: number;
+    description?: string;
 }

@@ -9,21 +9,28 @@ import { UrlData } from '../models/url.model';
   styleUrls: ['./item-list.component.css']
 })
 export class ItemListComponent implements OnInit {
-  @Input() mode: number;
-
-  private urlSub: Subscription;
-  urls: Array<UrlData>;
+  @Input() urls: Array<UrlData>;
 
   constructor(private urlService: UrlService) { }
 
   ngOnInit() {
-    this.urls = this.urlService.getData();
     
-    this.urlSub = this.urlService
-      .getUrlUpdateListener()
-      .subscribe(data => {
-        this.urls = data
-      });
+  }
+
+  onVisit(id: number){
+    this.urlService.updateDateVisited(id, Date.now())
+  }
+
+  onRemove(id: number){
+    this.urlService.removeUrl(id);
+  }
+
+  sortByName(){
+    this.urlService.sortByName();
+  }
+
+  sortByDate(){
+    this.urlService.sortByDate();
   }
 
 }
